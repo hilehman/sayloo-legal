@@ -1,32 +1,640 @@
 <!doctype html>
 <html lang="he" dir="rtl">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sayloo</title>
+<title>Sayloo · אנגלית שמדברים מהרגע הראשון</title>
+<meta name="description" content="סיילו היא אפליקציה לגילאי 3 עד 10: הילד שומע מילה באנגלית, אומר אותה בקול ומשחק איתה. ההורים מקבלים סיכום שבועי של מה נקלט ומה צריך עוד תרגול.">
+<meta property="og:title" content="Sayloo · אנגלית שמדברים מהרגע הראשון">
+<meta property="og:description" content="הילד אומר את המילה, והמשחק זז. אפליקציית אנגלית לגילאי 3 עד 10.">
+<meta property="og:image" content="https://sayloo.app/assets/og.png">
+<meta property="og:url" content="https://sayloo.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<link rel="canonical" href="https://sayloo.app/">
+<meta name="theme-color" content="#FFF7EC">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <style>
-:root { --bg: #ffffff; --fg: #1a2230; --muted: #5a6473; --rule: #dde2e8; --accent: #1d4d78; --box: #eef3f8; }
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #12161c; --fg: #e5e9ef; --muted: #9ba5b3; --rule: #2b333e; --accent: #8fb9e2; --box: #1b2632; color-scheme: dark; }
+@font-face { font-family: "Varela Round"; src: url(assets/fonts/VarelaRound-Regular.ttf) format("truetype"); font-display: swap; }
+@font-face { font-family: "Rubik"; src: url(assets/fonts/Rubik-Variable.ttf) format("truetype"); font-weight: 300 900; font-display: swap; }
+
+:root {
+  --paper: #FFF7EC; --sand: #F6E9D7; --sand-line: #EADBC6; --sand-shadow: #EAD7BD; --card-shadow: #F0E2CF;
+  --ink: #2A2238; --ink-soft: #6B5F73;
+  --apricot: #F08A4B; --apricot-dark: #D9692A; --apricot-tint: #FFE6D2; --apricot-shadow: #F0CDB0;
+  --gold: #F5B82E; --gold-deep: #E0A020; --gold-text: #B7790F;
+  --sky: #DCEFF2; --night: #2B2656;
+  --white: #FFFFFF; --outline: #50202B;
+  --wrap: 72rem;
+  color-scheme: light;
 }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Assistant", "Segoe UI", Arial, sans-serif; font-size: 17px; line-height: 1.7; }
-main { max-width: 42rem; margin: 0 auto; padding: 2rem 16px 4rem; }
-h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .25rem; }
-h2 { font-size: 1.2rem; margin: 2rem 0 .5rem; color: var(--accent); }
-.updated { color: var(--muted); margin: 0 0 1.5rem; }
-.summary { background: var(--box); border-radius: 8px; padding: .75rem 1.25rem; }
-ul { padding-inline-start: 1.4rem; margin: .25rem 0 1rem; }
-li { margin: .3rem 0; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Rubik", "Segoe UI", Arial, sans-serif; font-size: 18px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3, .display { font-family: "Varela Round", "Rubik", sans-serif; font-weight: 400; line-height: 1.15; margin: 0; }
 p { margin: 0 0 1rem; }
-.ltr { direction: ltr; unicode-bidi: isolate; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 16px; }
+.en { direction: ltr; unicode-bidi: isolate; font-family: "Varela Round", sans-serif; }
+.word { direction: ltr; unicode-bidi: isolate; display: inline-block; font-family: "Varela Round", sans-serif; background: var(--white); border: 2px solid var(--sand-line); border-radius: 10px; padding: 0 .45em; line-height: 1.5; box-shadow: 0 2px 0 var(--card-shadow); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1.05rem; border-radius: 18px; padding: .85rem 1.5rem; background: var(--apricot); color: var(--white); box-shadow: 0 5px 0 var(--apricot-dark); transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--apricot-dark); }
+.btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--apricot-dark); }
+.btn svg { width: 1.4rem; height: 1.4rem; flex: none; }
+.btn.ghost { background: var(--white); color: var(--ink); box-shadow: 0 5px 0 var(--sand-shadow); border: 2px solid var(--sand-line); }
+.btn.small { padding: .5rem 1rem; font-size: .95rem; border-radius: 14px; box-shadow: 0 4px 0 var(--apricot-dark); }
+
+/* nav */
+header.top { position: sticky; top: 0; z-index: 20; background: rgba(255, 247, 236, .92); backdrop-filter: blur(8px); border-bottom: 2px solid transparent; transition: border-color .2s; }
+header.top.scrolled { border-bottom-color: var(--sand-line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 4.25rem; gap: 1rem; }
+.logo { display: flex; align-items: center; gap: .55rem; text-decoration: none; font-family: "Varela Round", sans-serif; font-size: 1.45rem; }
+.logo img { width: 2.4rem; height: 2.4rem; border-radius: 12px; }
+nav.links { display: flex; gap: 1.6rem; font-size: .98rem; }
+nav.links a { text-decoration: none; color: var(--ink-soft); }
+nav.links a:hover { color: var(--ink); }
+@media (max-width: 760px) { nav.links { display: none; } }
+
+/* hero */
+.hero { padding: 3rem 0 4rem; position: relative; }
+.hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: center; }
+.eyebrow { display: inline-block; background: var(--apricot-tint); color: var(--apricot-dark); font-weight: 600; font-size: .92rem; border-radius: 99px; padding: .25rem .9rem; margin-bottom: 1.1rem; }
+.hero h1 { font-size: clamp(2.4rem, 5.6vw, 4.1rem); letter-spacing: -.01em; margin-bottom: 1.2rem; }
+.hero h1 .hl { color: var(--apricot); }
+.hero .lead { font-size: 1.2rem; color: var(--ink-soft); max-width: 33rem; margin-bottom: 1.8rem; }
+.hero .lead .word { font-size: 1rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.cta-note { font-size: .92rem; color: var(--ink-soft); }
+.hero-art { position: relative; height: 34rem; }
+.hero-art .phone { position: absolute; inset-inline-start: 50%; transform: translateX(50%) rotate(3deg); top: 0; width: 15.5rem; }
+.hero-art .bunny { position: absolute; width: 11.5rem; bottom: -.5rem; inset-inline-end: -.5rem; z-index: 3; }
+.float { position: absolute; width: 4.2rem; background: var(--white); border-radius: 50%; padding: .45rem; box-shadow: 0 4px 0 var(--card-shadow); border: 2px solid var(--sand-line); z-index: 2; animation: bob 5s ease-in-out infinite; }
+.float.f1 { top: 3%; inset-inline-end: 4%; }
+.float.f2 { top: 40%; inset-inline-start: 2%; animation-delay: -1.5s; width: 3.6rem; }
+.float.f3 { top: 12%; inset-inline-start: 4%; animation-delay: -3s; }
+.float.f4 { bottom: 10%; inset-inline-start: 6%; animation-delay: -2.2s; width: 3.4rem; }
+.bubble { position: absolute; z-index: 4; background: var(--white); border: 2px solid var(--sand-line); border-radius: 18px; padding: .45rem .9rem; font-family: "Varela Round", sans-serif; font-size: 1.15rem; box-shadow: 0 4px 0 var(--card-shadow); direction: ltr; }
+.bubble::after { content: ""; position: absolute; bottom: -9px; left: 22px; width: 14px; height: 14px; background: var(--white); border-right: 2px solid var(--sand-line); border-bottom: 2px solid var(--sand-line); transform: rotate(45deg); }
+.hero-art .bubble { top: 4.5rem; inset-inline-end: 1.5rem; }
+.bubble.mic { display: flex; align-items: center; gap: .45rem; }
+.bubble.mic svg { width: 1.1rem; height: 1.1rem; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@media (max-width: 860px) {
+  .hero { padding-top: 1.5rem; }
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero-art { height: 27rem; }
+  .hero-art .phone { width: 12.5rem; }
+  .hero-art .bunny { width: 8.5rem; inset-inline-end: 0; }
+  .hero-art .bubble { top: 3rem; inset-inline-end: 4%; }
+}
+
+/* phone frame */
+.phone { aspect-ratio: 1 / 2; border-radius: 2rem; border: 7px solid var(--ink); background: var(--ink); overflow: hidden; box-shadow: 0 12px 0 var(--sand-shadow); }
+.phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.55rem; }
+
+/* facts strip */
+.facts { background: var(--white); border-top: 2px solid var(--sand-line); border-bottom: 2px solid var(--sand-line); }
+.facts ul { list-style: none; margin: 0 auto; padding: 1.1rem 16px; max-width: var(--wrap); display: flex; flex-wrap: wrap; justify-content: space-around; gap: .6rem 2rem; }
+.facts li { display: flex; align-items: center; gap: .6rem; font-size: 1rem; color: var(--ink-soft); }
+.facts b { font-family: "Varela Round", sans-serif; font-weight: 400; font-size: 1.5rem; color: var(--ink); }
+
+/* sections */
+section { padding: 5rem 0; position: relative; }
+.kicker { font-weight: 600; color: var(--apricot-dark); font-size: .95rem; margin-bottom: .6rem; display: flex; align-items: center; gap: .5rem; }
+.kicker .n { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--apricot); color: var(--white); font-family: "Varela Round", sans-serif; font-size: .95rem; }
+h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin-bottom: 1.1rem; }
+.sec-lead { font-size: 1.15rem; color: var(--ink-soft); max-width: 40rem; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+@media (max-width: 860px) { .split { grid-template-columns: 1fr; gap: 2rem; } section { padding: 3.5rem 0; } }
+
+/* video */
+.video-sec { padding-top: 4rem; }
+.video-sec .head { text-align: center; max-width: 40rem; margin: 0 auto 2rem; }
+.video-box { position: relative; max-width: 58rem; margin: 0 auto; aspect-ratio: 16 / 9; border-radius: 28px; background: var(--sand); border: 3px dashed var(--sand-shadow); display: grid; place-items: center; overflow: hidden; }
+.video-box .inner { text-align: center; padding: 1rem; }
+.video-box .play { width: 5.5rem; height: 5.5rem; border-radius: 50%; background: var(--apricot); display: grid; place-items: center; margin: 0 auto 1rem; box-shadow: 0 6px 0 var(--apricot-dark); }
+.video-box .play svg { width: 2.2rem; height: 2.2rem; margin-inline-start: -.3rem; transform: scaleX(-1); }
+.video-box .todo { color: var(--ink-soft); font-size: .95rem; }
+.video-box .peek { position: absolute; width: 8rem; bottom: -.4rem; inset-inline-start: 2rem; }
+.video-box video { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 560px) { .video-box .peek { width: 5rem; inset-inline-start: 1rem; } .video-box .play { width: 4rem; height: 4rem; } }
+
+/* games */
+.games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+.game { background: var(--white); border: 2px solid var(--sand-line); border-radius: 26px; padding: 1.25rem 1.25rem 1.5rem; box-shadow: 0 6px 0 var(--card-shadow); }
+.game .phone { width: 62%; margin: 0 auto 1.3rem; border-width: 5px; border-radius: 1.4rem; box-shadow: none; }
+.game .phone img { border-radius: 1.1rem; }
+.game h3 { font-size: 1.35rem; margin-bottom: .45rem; }
+.game p { margin: 0; color: var(--ink-soft); font-size: 1rem; }
+@media (max-width: 860px) { .games { grid-template-columns: 1fr; max-width: 26rem; margin-inline: auto; } .game { display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; align-items: center; } .game .phone { width: 100%; margin: 0; } }
+
+.extras { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+.note-card { border-radius: 26px; padding: 1.6rem 1.6rem 1.4rem; position: relative; overflow: hidden; }
+.note-card h3 { font-size: 1.4rem; margin-bottom: .5rem; }
+.note-card p:last-child { margin-bottom: 0; }
+.note-card.apricot { background: var(--apricot-tint); }
+.note-card.sand { background: var(--sand); }
+.note-card.with-bunny { padding-inline-end: 8.5rem; min-height: 12rem; }
+.note-card .side-bunny { position: absolute; inset-inline-end: .5rem; bottom: -.6rem; width: 7.5rem; }
+@media (max-width: 760px) { .extras { grid-template-columns: 1fr; } .note-card.with-bunny { padding-inline-end: 1.6rem; padding-bottom: 8rem; } .note-card .side-bunny { width: 6.5rem; inset-inline-end: 1rem; } }
+
+/* research callout */
+.science { margin-top: 2rem; background: var(--white); border: 2px solid var(--sand-line); border-radius: 22px; padding: 1.2rem 1.4rem; display: flex; gap: 1rem; align-items: flex-start; box-shadow: 0 5px 0 var(--card-shadow); }
+.science .ico { flex: none; width: 2.6rem; height: 2.6rem; border-radius: 12px; background: var(--sky); display: grid; place-items: center; }
+.science .ico svg { width: 1.5rem; height: 1.5rem; }
+.science p { margin: 0; font-size: 1rem; }
+.science p + p { margin-top: .6rem; }
+.science .src { color: var(--ink-soft); font-size: .85rem; }
+
+/* speak section */
+.speak { background: var(--night); color: #F3EEFF; overflow: hidden; }
+.speak h2 { color: var(--white); }
+.speak .sec-lead { color: #CFC8EA; }
+.speak .kicker { color: #FFC59E; }
+.speak .stars { position: absolute; inset: 0; background-image: radial-gradient(2px 2px at 12% 20%, #fff8, transparent), radial-gradient(1.5px 1.5px at 30% 70%, #fff6, transparent), radial-gradient(2px 2px at 55% 12%, #fff7, transparent), radial-gradient(1.5px 1.5px at 80% 40%, #fff5, transparent), radial-gradient(2px 2px at 92% 85%, #fff6, transparent), radial-gradient(1.5px 1.5px at 42% 92%, #fff5, transparent), radial-gradient(1.5px 1.5px at 68% 62%, #fff6, transparent); pointer-events: none; }
+.speak .wrap { position: relative; }
+.speak .phone { width: 15rem; margin: 0 auto; box-shadow: 0 12px 0 #1C1840; border-color: #15122F; transform: rotate(-3deg); }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.8rem 0; }
+.compare div { border-radius: 20px; padding: 1rem 1.1rem; font-size: 1rem; }
+.compare .no { background: rgba(255, 255, 255, .06); border: 2px solid rgba(255, 255, 255, .12); color: #BEB6DD; }
+.compare .yes { background: rgba(240, 138, 75, .16); border: 2px solid rgba(240, 138, 75, .55); color: #FFE9DA; }
+.compare b { display: block; font-family: "Varela Round", sans-serif; font-weight: 400; font-size: 1.15rem; margin-bottom: .2rem; color: var(--white); }
+.speak .science { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .14); box-shadow: none; color: #E8E3F8; }
+.speak .science .ico { background: rgba(255, 255, 255, .12); }
+.speak .science .src { color: #A9A1CC; }
+.speak .word { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .2); box-shadow: none; color: var(--white); }
+.pills { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+.pill { display: flex; align-items: center; gap: .55rem; background: rgba(255, 255, 255, .08); border-radius: 99px; padding: .45rem 1rem .45rem 1rem; font-size: .95rem; }
+.pill svg { width: 1.2rem; height: 1.2rem; flex: none; }
+.listen-art { position: relative; height: 30rem; display: grid; place-items: center; }
+.listen-art > img:not(.heard) { width: 14rem; position: relative; z-index: 2; }
+.listen-art .ring { position: absolute; border-radius: 50%; border: 2px solid rgba(255, 197, 158, .35); width: 18rem; height: 18rem; animation: ring 3.2s ease-out infinite; }
+.listen-art .r2 { animation-delay: -1.06s; }
+.listen-art .r3 { animation-delay: -2.13s; }
+@keyframes ring { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+.listen-art .bubble.kid { top: 3rem; inset-inline-start: 6%; color: var(--ink); font-size: 1.5rem; }
+.listen-art .heard { position: absolute; width: 5rem; bottom: 4rem; inset-inline-end: 8%; background: var(--white); border-radius: 50%; padding: .6rem; box-shadow: 0 5px 0 #1C1840; z-index: 3; animation: bob 4s ease-in-out infinite; }
+@media (max-width: 560px) { .compare { grid-template-columns: 1fr; } .listen-art { height: 22rem; } .listen-art > img:not(.heard) { width: 10rem; } .listen-art .ring { width: 13rem; height: 13rem; } }
+
+/* parents */
+.report-art { position: relative; }
+.report-art .phone { width: 16rem; margin: 0 auto; }
+.report-art .tag { position: absolute; background: var(--white); border: 2px solid var(--sand-line); border-radius: 16px; padding: .5rem .85rem; font-size: .9rem; box-shadow: 0 4px 0 var(--card-shadow); max-width: 13rem; line-height: 1.4; }
+.report-art .tag b { display: block; font-size: .78rem; color: var(--apricot-dark); font-weight: 600; }
+.report-art .t1 { top: 9%; inset-inline-start: 0; }
+.report-art .t2 { top: 48%; inset-inline-end: 0; }
+.report-art .t3 { bottom: 10%; inset-inline-start: 4%; }
+@media (max-width: 560px) { .report-art .tag { position: static; max-width: none; margin-top: .7rem; } .report-art .phone { width: 13rem; margin-bottom: 1rem; } }
+.checks { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+.checks li { display: flex; gap: .8rem; margin-bottom: 1rem; align-items: flex-start; }
+.checks .dot { flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--gold); box-shadow: inset 0 -3px 0 var(--gold-deep); display: grid; place-items: center; margin-top: .1rem; }
+.checks .dot svg { width: 1rem; height: 1rem; }
+.checks b { display: block; }
+.checks span { color: var(--ink-soft); font-size: 1rem; }
+.tip { margin-top: 1.4rem; background: var(--apricot-tint); border-radius: 18px; padding: .9rem 1.1rem; font-size: 1rem; }
+
+/* age */
+.age { background: var(--sand); }
+.age .split { grid-template-columns: .8fr 1.2fr; }
+.age-art { position: relative; display: flex; justify-content: center; }
+.age-art img { width: 15rem; }
+.big-num { font-family: "Varela Round", sans-serif; font-size: clamp(3rem, 8vw, 5rem); line-height: 1; color: var(--apricot); }
+.big-num small { font-size: .35em; color: var(--ink-soft); display: block; margin-top: .4rem; font-family: "Rubik", sans-serif; }
+@media (max-width: 860px) { .age .split { grid-template-columns: 1fr; } .age-art img { width: 11rem; } }
+
+/* words */
+.themes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-top: 2.2rem; }
+.theme { background: var(--white); border: 2px solid var(--sand-line); border-radius: 22px; padding: 1rem .6rem .8rem; text-align: center; box-shadow: 0 5px 0 var(--card-shadow); transition: transform .15s; }
+.theme:hover { transform: translateY(-4px) rotate(-1deg); }
+.theme .pic { height: 4.2rem; display: grid; place-items: center; margin-bottom: .5rem; }
+.theme .pic img { width: 4.2rem; height: 4.2rem; object-fit: contain; }
+.theme .swatches { display: flex; gap: .3rem; }
+.theme .swatches i { width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 2px solid var(--outline); }
+.theme .nums { font-family: "Varela Round", sans-serif; font-size: 2.2rem; color: var(--gold-text); direction: ltr; }
+.theme b { display: block; font-weight: 600; font-size: 1.02rem; }
+.theme span { color: var(--ink-soft); font-size: .88rem; }
+@media (max-width: 860px) { .themes { grid-template-columns: repeat(2, 1fr); } }
+
+/* story */
+.story { max-width: 46rem; margin: 0 auto; background: var(--white); border: 2px solid var(--sand-line); border-radius: 30px; padding: 2.2rem 2.4rem; box-shadow: 0 8px 0 var(--card-shadow); position: relative; }
+.story h2 { font-size: 1.9rem; }
+.story p { font-size: 1.08rem; }
+.story .sign { color: var(--ink-soft); margin: 0; }
+.story .peek { position: absolute; width: 7.5rem; top: -5.2rem; inset-inline-end: 2.5rem; }
+@media (max-width: 560px) { .story { padding: 1.6rem 1.3rem; } .story .peek { width: 5.5rem; top: -3.8rem; } }
+
+/* price */
+.price { text-align: center; }
+.price .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 50rem; margin: 2.2rem auto 0; text-align: start; }
+.plan { background: var(--white); border: 2px solid var(--sand-line); border-radius: 26px; padding: 1.6rem; box-shadow: 0 6px 0 var(--card-shadow); }
+.plan.full { background: var(--apricot-tint); border-color: var(--apricot-shadow); box-shadow: 0 6px 0 var(--apricot-shadow); }
+.plan h3 { font-size: 1.5rem; margin-bottom: .3rem; }
+.plan .sub { color: var(--ink-soft); font-size: .95rem; margin-bottom: 1rem; }
+.plan ul { padding-inline-start: 1.2rem; margin: 0; }
+.plan li { margin-bottom: .4rem; font-size: 1rem; }
+@media (max-width: 680px) { .price .cards { grid-template-columns: 1fr; } }
+
+/* faq */
+.faq { max-width: 50rem; margin: 2rem auto 0; }
+details { background: var(--white); border: 2px solid var(--sand-line); border-radius: 20px; margin-bottom: .9rem; box-shadow: 0 4px 0 var(--card-shadow); }
+summary { cursor: pointer; list-style: none; padding: 1.05rem 1.3rem; font-weight: 600; font-size: 1.08rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: "Varela Round", sans-serif; font-size: 1.6rem; color: var(--apricot); line-height: 1; transition: transform .2s; }
+details[open] summary::after { transform: rotate(45deg); }
+details .a { padding: 0 1.3rem 1.1rem; color: var(--ink-soft); font-size: 1.02rem; }
+details .a p:last-child { margin: 0; }
+
+/* final cta */
+.final { text-align: center; padding-bottom: 6rem; }
+.final .bunny { width: 11rem; margin: 0 auto 1rem; animation: bob 4s ease-in-out infinite; }
+.final h2 { margin-bottom: .8rem; }
+.final .sec-lead { margin: 0 auto 2rem; }
+
+/* sources */
+.sources { max-width: 50rem; margin: 0 auto; font-size: .9rem; color: var(--ink-soft); }
+.sources details { box-shadow: none; background: transparent; }
+.sources summary { font-size: .95rem; font-weight: 500; }
+.sources ol { margin: 0; padding: 0 2.6rem 1.2rem 1.3rem; }
+.sources li { margin-bottom: .45rem; }
+
+footer { border-top: 2px solid var(--sand-line); padding: 2rem 0 2.5rem; font-size: .92rem; color: var(--ink-soft); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem 2rem; align-items: center; }
+footer nav { display: flex; flex-wrap: wrap; gap: .4rem 1.3rem; }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--ink); }
+
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } .reveal { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+
+/* why speaking */
+.why { padding-top: 1rem; }
+.why-card { position: relative; max-width: 56rem; margin: 0 auto; background: var(--apricot-tint); border-radius: 32px; padding: 2.4rem 2.6rem; padding-inline-end: 13rem; overflow: hidden; }
+.why-card h2 { margin-bottom: 1rem; }
+.why-card .kicker { color: var(--apricot-dark); }
+.why-card .sec-lead { color: var(--ink); max-width: none; }
+.why-card .sec-lead:last-of-type { margin-bottom: 0; }
+.why-bunny { position: absolute; width: 11rem; bottom: -.8rem; inset-inline-end: 1.2rem; }
+@media (max-width: 760px) { .why-card { padding: 1.8rem 1.4rem 11rem; } .why-bunny { width: 8.5rem; inset-inline-end: 50%; transform: translateX(50%); } }
+
+/* screenshots row */
+.shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; margin-top: 2.6rem; }
+.shots figure { margin: 0; text-align: center; }
+.shots .phone { width: 100%; max-width: 13rem; margin: 0 auto .9rem; border-width: 6px; border-radius: 1.7rem; box-shadow: 0 8px 0 var(--sand-shadow); }
+.shots .phone img { border-radius: 1.3rem; }
+.shots figure:nth-child(odd) .phone { transform: rotate(-2deg); }
+.shots figure:nth-child(even) .phone { transform: rotate(2deg) translateY(1rem); }
+.shots figcaption { font-family: "Varela Round", sans-serif; font-size: 1.2rem; margin-top: 1rem; }
+@media (max-width: 860px) { .shots { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.2rem; } .shots .phone { max-width: 10rem; } }
+
+.story .pull { font-family: "Varela Round", sans-serif; font-size: 1.35rem; color: var(--apricot-dark); line-height: 1.4; margin: 1.4rem 0; }
 </style>
+</head>
+<body>
+
+<!-- Google Play link: replace with the official "Get it on Google Play" badge before going live
+     (Google's badge generator, https://play.google.com/intl/en_us/badges/). -->
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="logo" href="#"><img src="assets/icon-192.png" alt=""><span class="en">Sayloo</span></a>
+    <nav class="links" aria-label="ניווט">
+      <a href="#play">משחקים</a>
+      <a href="#speak">מדברים</a>
+      <a href="#parents">להורים</a>
+      <a href="#faq">שאלות</a>
+    </nav>
+    <a class="btn small" href="https://play.google.com/store/apps/details?id=app.sayloo">להורדה</a>
+  </div>
+</header>
+
 <main>
-<h1>Sayloo</h1>
-<p class="updated">אפליקציה ללימוד שפה לילדים · A language app for children</p>
-<ul>
-  <li><a href="privacy-policy.he.html">מדיניות פרטיות</a> · <a href="privacy-policy.en.html">Privacy Policy</a></li>
-  <li><a href="terms.he.html">תנאי שימוש</a> · <a href="terms.en.html">Terms of Use</a></li>
-  <li><a href="delete-account.he.html">מחיקת החשבון</a> · <a href="delete-account.en.html">Delete your account</a></li>
-</ul>
-<p>יצירת קשר · Contact: <span class="ltr">sayloo.app@gmail.com</span></p>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">אנגלית לגילאי <span dir="ltr">3–10</span></span>
+      <h1>אנגלית <span class="hl">שמדברים</span> מהרגע הראשון</h1>
+      <p class="lead">לומדים מילה חדשה, משתמשים בה בדיבור תוך כדי משחק, ומגדילים את אוצר המילים בלי להרגיש ובכיף. מתאים גם לילדים שעוד לא יודעים לקרוא בעברית!</p>
+      <div class="cta-row">
+        <a class="btn" href="https://play.google.com/store/apps/details?id=app.sayloo">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l9.3-9.7-9.3-9.7zm10.4 8.6 2.7-2.8L6.3 1.6c-.4-.2-.8-.3-1.1-.2l9.8 9.5zm0 2.2-9.8 9.5c.3.1.7 0 1.1-.2l11.4-6.5-2.7-2.8zm5.6-3.3-2.4-1.4-3 3.1 3 3.1 2.4-1.4c1.1-.7 1.1-2.7 0-3.4z"/></svg>
+          להורדה ב-Google Play
+        </a>
+        <span class="cta-note">מתחילים בחינם · בלי פרסומות</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="phone"><img src="assets/shots/02-lesson-elephant.webp" alt=""></div>
+      <img class="float f1" src="assets/icons/produce.banana.webp" alt="">
+      <img class="float f2" src="assets/icons/animal.lion.webp" alt="">
+      <img class="float f3" src="assets/icons/vehicle.car.webp" alt="">
+      <img class="float f4" src="assets/icons/toy.ball.webp" alt="">
+      <div class="bubble mic"><svg viewBox="0 0 24 24" fill="none" stroke="#F08A4B" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10a7 7 0 0 1-14 0M12 17v5"/></svg>elephant!</div>
+      <img class="bunny" src="assets/bunny/cheer.webp" alt="">
+    </div>
+  </div>
+</section>
+
+<div class="facts">
+  <ul>
+    <li><b>100</b> מילים ראשונות שכל ילד צריך להכיר</li>
+    <li><b class="en">ABC</b> אותיות באנגלית</li>
+    <li><b>4</b> משחקי דיבור</li>
+    <li><b>0</b> פרסומות</li>
+  </ul>
+</div>
+
+<!-- VIDEO -->
+<!-- Hidden until the video is ready: remove "hidden" when it goes in. -->
+<section class="video-sec" id="video" hidden>
+  <div class="wrap">
+    <div class="head reveal">
+      <h2>ככה זה נראה אצלנו בסלון</h2>
+      <p class="sec-lead" style="margin-inline:auto">הילד שלנו, הטלפון, וארנב אחד שמחכה שיגידו לו משהו באנגלית.</p>
+    </div>
+    <!-- VIDEO PLACEHOLDER. When the video is ready, replace the whole .inner div with:
+         <video controls playsinline preload="metadata" poster="assets/video/poster.jpg">
+           <source src="assets/video/sayloo.mp4" type="video/mp4">
+         </video>
+         and remove the dashed border (.video-box style). A vertical 9:16 cut can sit next to it on phones. -->
+    <div class="video-box reveal">
+      <div class="inner">
+        <div class="play"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="todo">כאן ייכנס הסרטון</div>
+      </div>
+      <img class="peek" src="assets/bunny/peek.webp" alt="" aria-hidden="true">
+    </div>
+  </div>
+</section>
+
+<!-- WHY SPEAKING -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="why-card reveal">
+      <div class="kicker">למה דווקא למידה בעזרת דיבור?</div>
+      <h2>לגדל ילדים שמשתמשים באנגלית בטבעיות</h2>
+      <p class="sec-lead">ילדים שנחשפים לאנגלית באופן פסיבי, בסרטוני יוטיוב או במשחקים של "בחרו את המילה הנכונה", לומדים לזהות את המילה, אבל לא לומדים <b>להגיד</b> אותה.</p>
+      <p class="sec-lead">שימוש במילה בקול מהרגע הראשון נותן ביטחון, עוזר למילה להיכנס לראש, ומעביר לילדים מסר חשוב: <b>אתם יודעים, ואתם יכולים לדבר באנגלית!</b></p>
+      <img class="why-bunny" src="assets/bunny/talk_open.webp" alt="" aria-hidden="true" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- 1. HOW IT WORKS -->
+<section id="play">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker"><span class="n">1</span> לומדים ומשחקים</div>
+      <h2>מילים חדשות, ושימוש מיידי בדיבור</h2>
+      <p class="sec-lead">שיעור בסיילו לוקח רגע: הארנב מלמד שתי מילים, הילד חוזר עליהן, וזהו. עכשיו משחקים! המילים מופיעות בתוך משחקים שבהם הדרך לנצח ולזכות במטבעות היא להגיד אותן.</p>
+    </div>
+
+    <div class="shots">
+      <figure class="reveal"><div class="phone"><img src="assets/shots/02-lesson-elephant.webp" alt="שיעור: הארנב מלמד את המילה elephant" loading="lazy"></div><figcaption>השיעור</figcaption></figure>
+      <figure class="reveal"><div class="phone"><img src="assets/shots/03-race.webp" alt="משחק המרוץ: נתיבים עם חתול, לימון, בננה, פיל ותות" loading="lazy"></div><figcaption>מרוץ</figcaption></figure>
+      <figure class="reveal"><div class="phone"><img src="assets/shots/04-meteors.webp" alt="משחק המטאורים בחלל" loading="lazy"></div><figcaption>מטאורים</figcaption></figure>
+      <figure class="reveal"><div class="phone"><img src="assets/shots/05-hop.webp" alt="משחק הקפיצות: לוח משבצות עם הארנב והגזר" loading="lazy"></div><figcaption>קפיצות</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SPEAK -->
+<section class="speak" id="speak">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <div class="kicker"><span class="n">2</span> מדברים, לא מסתכלים</div>
+        <h2>כאן הילד הוא זה שמדבר</h2>
+        <p class="sec-lead">רוב מה שילדים פוגשים במסך פשוט רץ מולם. אפשר לראות שעה של שירים באנגלית ולצאת עם מנגינה בראש ובלי אף מילה. עם סיילו, הדרך היחידה לשחק היא להגיד את המילים בקול. האפליקציה שומעת את המילה ומגיבה, כמו מבוגר שעונה לילד שמנסה מילה חדשה.</p>
+
+        <div class="science">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 14h9"/></svg></div>
+          <div>
+            <p>מחקרים מראים שילדים קטנים כמעט לא לומדים שפה מסרטון שרץ מולם. הם לומדים כשהם מדברים ומישהו עונה להם, בדיוק כמו שלמדו לדבר כשהיו תינוקות. מה שמשפיע על ההתפתחות השפתית שלהם הוא כמה פעמים הם דיברו וקיבלו תשובה, ולא כמה מילים הם שמעו.</p>
+          </div>
+        </div>
+      </div>
+      <div class="listen-art reveal" aria-hidden="true">
+        <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+        <img src="assets/bunny/listen.webp" alt="" loading="lazy">
+        <div class="bubble kid">banana!</div>
+        <img class="heard" src="assets/icons/produce.banana.webp" alt="">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. PARENTS -->
+<section id="parents">
+  <div class="wrap">
+    <div class="split">
+      <div class="report-art reveal">
+        <div class="phone"><img src="assets/shots/07-progress.webp" alt="מסך ההתקדמות להורים: סיכום שבועי ורשימת מילים לפי נושא" loading="lazy"></div>
+        <div class="tag t1"><b>השבוע</b>אמר 8 מילים ולמד 4 חדשות. הכי קשה לו עכשיו: <span class="en">red</span></div>
+        <div class="tag t2"><b>כחול · <span class="en">blue</span></b>ההגייה במצב מושלם</div>
+        <div class="tag t3"><b>אדום · <span class="en">red</span></b>צריך עוד קצת תרגול</div>
+      </div>
+      <div class="reveal">
+        <div class="kicker"><span class="n">3</span> להורים</div>
+        <h2>אתם רואים מה נקלט ומה עוד לא</h2>
+        <p class="sec-lead">לכל ילד פרופיל משלו, ובאזור ההורים מחכה תמונת מצב שנותנת לכם את כל מה שצריך לדעת על ההתקדמות והלמידה שלו:</p>
+        <ul class="checks">
+          <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><div><b>סיכום שבועי במשפט אחד</b><span>כמה מילים נאמרו, כמה מילים חדשות נלמדו, ואיזו מילה הכי קשה כרגע.</span></div></li>
+          <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><div><b>כל מילה, ואיך היא נשמעת</b><span>ליד כל מילה כתוב אם ההגייה כבר מדויקת או שכדאי להתאמן עליה עוד קצת.</span></div></li>
+          <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><div><b>רשימה של מה לחזק</b><span>לחיצה אחת מסננת רק את המילים שעוד צריכות תרגול.</span></div></li>
+          <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><div><b>המשחק היומי עושה את זה לבד</b><span>בכל יום יש משחק שחוזר על המילים שמזמן לא נאמרו ועל אלה שעוד קצת קשות לילד.</span></div></li>
+        </ul>
+        <div class="tip"><b>טיפ מאיתנו:</b> את השיעורים כדאי לעשות יחד. חמש דקות על הספה, לעזור עם ההגייה ולראות שהוא מסתדר. את המשחקים הם כבר יודעים לשחק לבד.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section class="age">
+  <div class="wrap">
+    <div class="split">
+      <div class="age-art reveal"><img src="assets/bunny/wow.webp" alt="" aria-hidden="true" loading="lazy"></div>
+      <div class="reveal">
+        <h2>למה דווקא עכשיו</h2>
+        <p class="sec-lead">ילדים קטנים עוד שומעים צלילים שלנו, המבוגרים, כבר קשה לשמוע. והם לא מתביישים לנסות: ילד בן חמש יגיד <span class="word">elephant</span> בקול רם בלי לחשוב פעמיים.</p>
+        <p class="sec-lead">מחקרים מראים שמי שמתחיל שפה שנייה בילדות מגיע הכי קרוב לרמה של דובר שפת אם. אז לא צריך לחכות לכיתה ג'. אפשר להתחיל בקטן, עכשיו, בכמה דקות ביום.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORDS -->
+<section id="words">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <h2>מאה המילים הראשונות</h2>
+      <p class="sec-lead" style="margin-inline:auto">עשרה נושאים, עשר מילים בכל אחד. מילים שכל ילד פוגש בבית, בגן ובדרך לסבא וסבתא.</p>
+    </div>
+    <div class="themes">
+      <div class="theme reveal"><div class="pic"><div class="swatches"><i style="background:#E53935"></i><i style="background:#1E88E5"></i><i style="background:#FDD835"></i></div></div><b>צבעים</b><span class="en">red, blue</span></div>
+      <div class="theme reveal"><div class="pic"><div class="nums">1 2 3</div></div><b>מספרים</b><span class="en">one, two</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/animal.lion.webp" alt="" loading="lazy"></div><b>חיות</b><span class="en">lion, cat</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/vehicle.train.webp" alt="" loading="lazy"></div><b>כלי תחבורה</b><span class="en">train, car</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/toy.teddy.webp" alt="" loading="lazy"></div><b>צעצועים</b><span class="en">teddy, ball</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/produce.watermelon.webp" alt="" loading="lazy"></div><b>פירות וירקות</b><span class="en">banana</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/sweet.icecream.webp" alt="" loading="lazy"></div><b>ממתקים</b><span class="en">ice cream</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/food.pizza.webp" alt="" loading="lazy"></div><b>אוכל</b><span class="en">pizza</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/home.bed.webp" alt="" loading="lazy"></div><b>הבית</b><span class="en">bed</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/nature.rainbow.webp" alt="" loading="lazy"></div><b>טבע</b><span class="en">rainbow</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY (the user's own words) -->
+<section style="padding-top:4rem">
+  <div class="wrap">
+    <div class="story reveal">
+      <img class="peek" src="assets/bunny/peek.webp" alt="" aria-hidden="true">
+      <h2>איך סיילו התחיל</h2>
+      <p>תמיד היה לנו ברור שנרצה שהילדים ירכשו אנגלית בגיל קטן. נתנו להם לצפות בקוקומלון, להקשיב לסיפורים באנגלית וללחוץ על כפתורים בצעצוע שמקריא את המילה שלוחצים עליה.</p>
+      <p>ובאמת, גילינו לאט לאט שהם מבינים מילים בצורה טובה, אבל לא יודעים <b>לדבר</b> באנגלית. כולנו מכירים את זה: אנחנו יכולים לצפות בסדרה באנגלית ולהבין כל מילה, ולהתחיל לגמגם בחו"ל כששואלים אותנו שאלה פשוטה וצריך לענות באנגלית.</p>
+      <p class="pull">שמיעה פסיבית ודיבור אקטיבי הם פשוט שני דברים שונים לגמרי.</p>
+      <p>כדי לעודד אותם <b>לדבר</b>, החלטתי לבנות את סיילו: אפליקציה שלא רק מכירה להם עשרות מילים חדשות, אלא גם מוודאת שהם יודעים <b>להגיד</b> אותן. התוצאות הגיעו מהר. הם התחילו להשתמש במילים באנגלית בעצמם, ולשלב אותן בשיחה היומיומית.</p>
+      <p>אני רוצה להזמין אתכם להצטרף להרפתקה הזאת, ולתת לילדים שלכם את אחד הכלים הכי חשובים שיש: היכולת לדבר עם אנשים בכל העולם בצורה פשוטה וטבעית.</p>
+      <p class="sign">אבא של עדי ונטע, וסיילו</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section class="price" id="price">
+  <div class="wrap">
+    <div class="reveal">
+      <h2>מתחילים בחינם</h2>
+      <p class="sec-lead" style="margin-inline:auto">אפשר לנסות לפני שמחליטים.</p>
+    </div>
+    <div class="cards">
+      <div class="plan reveal">
+        <h3>חינם</h3>
+        <p class="sub">בלי הגבלת זמן</p>
+        <ul>
+          <li>השלב הראשון בצבעים ובחיות</li>
+          <li>כל המשחקים</li>
+          <li>דוח ההתקדמות להורים</li>
+        </ul>
+      </div>
+      <div class="plan full reveal">
+        <h3>הגרסה המלאה</h3>
+        <p class="sub">תשלום אחד · נפתחת מאזור ההורים</p>
+        <ul>
+          <li>כל מאה המילים, בכל עשרת הנושאים</li>
+          <li>כל השלבים והמשחקים</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top:2rem">
+  <div class="wrap">
+    <h2 style="text-align:center" class="reveal">שאלות שהורים שואלים</h2>
+    <div class="faq">
+      <details>
+        <summary>לאיזה גיל זה מתאים?</summary>
+        <div class="a"><p>לגילאי 3 עד 10. הקטנים יותר ילמדו וישחקו יחד עם ההורים (חוויה כיפית!), והגדולים יכולים ללמוד ולשחק לגמרי לבד.</p><p>יש באפליקציה גם מצב נעילה, שדואג שהילד לא יצא ממנה וימצא את עצמו ביוטיוב (או במייל של העבודה שלכם...).</p></div>
+      </details>
+      <details>
+        <summary>הילד עוד לא יודע לקרוא. זה בעיה?</summary>
+        <div class="a"><p>בכלל לא. הכול בקול ובתמונות: הארנב אומר את המילה, מראה ציור, והילד עונה בקול. אין מה לקרוא ואין מה להקליד.</p></div>
+      </details>
+      <details>
+        <summary>אנחנו לא מדברים אנגלית טוב בבית. זה יעבוד?</summary>
+        <div class="a"><p>בטח. ההורים לא צריכים לדעת אנגלית. האפליקציה כולה בעברית ומשלבת את המילים באנגלית בצורה ידידותית, כך שהיא מתאימה גם למי שמגיע בלי שום ידע קודם.</p></div>
+      </details>
+      <details>
+        <summary>כמה זמן ביום?</summary>
+        <div class="a"><p>תלוי בגיל של הילד, בסבלנות וביכולת הריכוז. מומלץ שיעור או שניים ביום, עם כמה משחקים לתרגול: בסך הכול בערך רבע שעה. מניסיון, ילדים גדולים יכולים לשחק גם חצי שעה ויותר.</p></div>
+      </details>
+      <details>
+        <summary>מה עם הפרטיות של הילד?</summary>
+        <div class="a"><p>הזיהוי של מה שהילד אומר קורה בטלפון עצמו, ולא נשלח לשרתים שלנו. הקול שלו לא נשמר: מה שהוא אומר תוך כדי משחק נעלם מיד, בלי אפשרות שחזור.</p></div>
+      </details>
+      <details>
+        <summary>צריך אינטרנט?</summary>
+        <div class="a"><p>רק בפעם הראשונה, כשההורה מתחבר. מעבר לזה הכול קורה בטלפון עצמו, כך שאפשר לשחק גם בדרך לאילת.</p></div>
+      </details>
+      <details>
+        <summary>יש גרסה לאייפון?</summary>
+        <div class="a"><p>עוד לא. כרגע סיילו זמין לאנדרואיד, וגרסת האייפון בדרך.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap reveal">
+    <img class="bunny" src="assets/bunny/celebrate.webp" alt="" aria-hidden="true" loading="lazy">
+    <h2>תנו לו ללמוד את המילה הראשונה כבר הערב!</h2>
+    <a class="btn" href="https://play.google.com/store/apps/details?id=app.sayloo">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l9.3-9.7-9.3-9.7zm10.4 8.6 2.7-2.8L6.3 1.6c-.4-.2-.8-.3-1.1-.2l9.8 9.5zm0 2.2-9.8 9.5c.3.1.7 0 1.1-.2l11.4-6.5-2.7-2.8zm5.6-3.3-2.4-1.4-3 3.1 3 3.1 2.4-1.4c1.1-.7 1.1-2.7 0-3.4z"/></svg>
+      להורדה ב-Google Play
+    </a>
+  </div>
+</section>
+<div class="sources">
+  <details>
+    <summary>על מה זה מבוסס</summary>
+    <ol>
+      <li dir="ltr">Kuhl, P. K., Tsao, F.-M., &amp; Liu, H.-M. (2003). Foreign-language experience in infancy. <i>PNAS</i>, 100(15), 9096–9101.</li>
+      <li dir="ltr">Roseberry, S., Hirsh-Pasek, K., &amp; Golinkoff, R. M. (2014). Skype me! Socially contingent interactions help toddlers learn language. <i>Child Development</i>, 85(3).</li>
+      <li dir="ltr">Romeo, R. R., et al. (2018). Beyond the 30-million-word gap. <i>Psychological Science</i>, 29(5), 700–710.</li>
+      <li dir="ltr">Hartshorne, J. K., Tenenbaum, J. B., &amp; Pinker, S. (2018). A critical period for second language acquisition: Evidence from 2/3 million English speakers. <i>Cognition</i>, 177, 263–277.</li>
+      <li dir="ltr">Skene, K., et al. (2022). Can guidance during play enhance children's learning and development in educational contexts? <i>Child Development</i>, 93(4), 1162–1180.</li>
+      <li dir="ltr">Hirsh-Pasek, K., et al. (2015). Putting education in "educational" apps. <i>Psychological Science in the Public Interest</i>, 16(1).</li>
+    </ol>
+  </details>
+</div>
+
 </main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 <span class="en">Sayloo</span> · <a href="mailto:hello@sayloo.app" class="en">hello@sayloo.app</a></div>
+    <nav aria-label="מסמכים">
+      <a href="https://sayloo.app/privacy-policy.he.html">מדיניות פרטיות</a>
+      <a href="https://sayloo.app/terms.he.html">תנאי שימוש</a>
+      <a href="https://sayloo.app/delete-account.he.html">מחיקת חשבון</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const header = document.getElementById('top');
+    addEventListener('scroll', () => header.classList.toggle('scrolled', scrollY > 8), { passive: true });
+    // Text is hidden only once this script runs, so a failed script never hides it.
+    let waiting = [...document.querySelectorAll('.reveal')];
+    const check = () => {
+      const limit = innerHeight * 0.95;
+      waiting = waiting.filter((el) => {
+        if (el.getBoundingClientRect().top < limit) { el.classList.add('in'); return false; }
+        return true;
+      });
+    };
+    document.documentElement.classList.add('js');
+    check();
+    addEventListener('scroll', check, { passive: true });
+    addEventListener('resize', check);
+    // Never leave anything hidden (print, odd browsers, jumping to an anchor).
+    setTimeout(() => waiting.forEach((el) => el.classList.add('in')), 4000);
+  })();
+</script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "417c3a90aef7463a815d97be73efca8c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
