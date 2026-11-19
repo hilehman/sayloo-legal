@@ -22,7 +22,7 @@
 :root {
   --paper: #FFF7EC; --sand: #F6E9D7; --sand-line: #EADBC6; --sand-shadow: #EAD7BD; --card-shadow: #F0E2CF;
   --ink: #2A2238; --ink-soft: #6B5F73;
-  --apricot: #F08A4B; --apricot-dark: #D9692A; --apricot-tint: #FFE6D2; --apricot-shadow: #F0CDB0;
+  --apricot: #F08A4B; --apricot-dark: #D9692A; --apricot-ink: #A84A12; --button: #B85417; --button-shadow: #8A3D0F; --apricot-tint: #FFE6D2; --apricot-shadow: #F0CDB0;
   --gold: #F5B82E; --gold-deep: #E0A020; --gold-text: #B7790F;
   --sky: #DCEFF2; --night: #2B2656;
   --white: #FFFFFF; --outline: #50202B;
@@ -30,6 +30,9 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; z-index: 50; background: var(--ink); color: var(--white); padding: .6rem 1rem; border-radius: 10px; text-decoration: none; }
+.skip:focus { top: 1rem; }
 [hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Rubik", "Segoe UI", Arial, sans-serif; font-size: 18px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -42,12 +45,12 @@ p { margin: 0 0 1rem; }
 .word { direction: ltr; unicode-bidi: isolate; display: inline-block; font-family: "Varela Round", sans-serif; background: var(--white); border: 2px solid var(--sand-line); border-radius: 10px; padding: 0 .45em; line-height: 1.5; box-shadow: 0 2px 0 var(--card-shadow); }
 
 /* buttons */
-.btn { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1.05rem; border-radius: 18px; padding: .85rem 1.5rem; background: var(--apricot); color: var(--white); box-shadow: 0 5px 0 var(--apricot-dark); transition: transform .12s, box-shadow .12s; }
-.btn:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--apricot-dark); }
-.btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--apricot-dark); }
+.btn { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1.05rem; border-radius: 18px; padding: .85rem 1.5rem; background: var(--button); color: var(--white); box-shadow: 0 5px 0 var(--button-shadow); transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translateY(2px); box-shadow: 0 3px 0 var(--button-shadow); }
+.btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--button-shadow); }
 .btn svg { width: 1.4rem; height: 1.4rem; flex: none; }
 .btn.ghost { background: var(--white); color: var(--ink); box-shadow: 0 5px 0 var(--sand-shadow); border: 2px solid var(--sand-line); }
-.btn.small { padding: .5rem 1rem; font-size: .95rem; border-radius: 14px; box-shadow: 0 4px 0 var(--apricot-dark); }
+.btn.small { padding: .5rem 1rem; font-size: .95rem; border-radius: 14px; box-shadow: 0 4px 0 var(--button-shadow); }
 
 /* nav */
 header.top { position: sticky; top: 0; z-index: 20; background: rgba(255, 247, 236, .92); backdrop-filter: blur(8px); border-bottom: 2px solid transparent; transition: border-color .2s; }
@@ -63,9 +66,9 @@ nav.links a:hover { color: var(--ink); }
 /* hero */
 .hero { padding: 3rem 0 4rem; position: relative; }
 .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: center; }
-.eyebrow { display: inline-block; background: var(--apricot-tint); color: var(--apricot-dark); font-weight: 600; font-size: .92rem; border-radius: 99px; padding: .25rem .9rem; margin-bottom: 1.1rem; }
+.eyebrow { display: inline-block; background: var(--apricot-tint); color: var(--apricot-ink); font-weight: 600; font-size: .92rem; border-radius: 99px; padding: .25rem .9rem; margin-bottom: 1.1rem; }
 .hero h1 { font-size: clamp(2.4rem, 5.6vw, 4.1rem); letter-spacing: -.01em; margin-bottom: 1.2rem; }
-.hero h1 .hl { color: var(--apricot); }
+.hero h1 .hl { color: var(--apricot-dark); }
 .hero .lead { font-size: 1.2rem; color: var(--ink-soft); max-width: 33rem; margin-bottom: 1.8rem; }
 .hero .lead .word { font-size: 1rem; }
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
@@ -76,7 +79,7 @@ nav.links a:hover { color: var(--ink); }
 .float { position: absolute; width: 4.2rem; background: var(--white); border-radius: 50%; padding: .45rem; box-shadow: 0 4px 0 var(--card-shadow); border: 2px solid var(--sand-line); z-index: 2; animation: bob 5s ease-in-out infinite; }
 .float.f1 { top: 3%; inset-inline-end: 4%; }
 .float.f2 { top: 40%; inset-inline-start: 2%; animation-delay: -1.5s; width: 3.6rem; }
-.float.f3 { top: 12%; inset-inline-start: 4%; animation-delay: -3s; }
+.float.f3 { top: 24%; inset-inline-start: 4%; animation-delay: -3s; }
 .float.f4 { bottom: 10%; inset-inline-start: 6%; animation-delay: -2.2s; width: 3.4rem; }
 .bubble { position: absolute; z-index: 4; background: var(--white); border: 2px solid var(--sand-line); border-radius: 18px; padding: .45rem .9rem; font-family: "Varela Round", sans-serif; font-size: 1.15rem; box-shadow: 0 4px 0 var(--card-shadow); direction: ltr; }
 .bubble::after { content: ""; position: absolute; bottom: -9px; left: 22px; width: 14px; height: 14px; background: var(--white); border-right: 2px solid var(--sand-line); border-bottom: 2px solid var(--sand-line); transform: rotate(45deg); }
@@ -91,6 +94,7 @@ nav.links a:hover { color: var(--ink); }
   .hero-art .phone { width: 12.5rem; }
   .hero-art .bunny { width: 8.5rem; inset-inline-end: 0; }
   .hero-art .bubble { top: 3rem; inset-inline-end: 4%; }
+  .float.f3 { top: 38%; inset-inline-start: auto; inset-inline-end: 3%; }
 }
 
 /* phone frame */
@@ -105,8 +109,8 @@ nav.links a:hover { color: var(--ink); }
 
 /* sections */
 section { padding: 5rem 0; position: relative; }
-.kicker { font-weight: 600; color: var(--apricot-dark); font-size: .95rem; margin-bottom: .6rem; display: flex; align-items: center; gap: .5rem; }
-.kicker .n { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--apricot); color: var(--white); font-family: "Varela Round", sans-serif; font-size: .95rem; }
+.kicker { font-weight: 600; color: var(--apricot-ink); font-size: .95rem; margin-bottom: .6rem; display: flex; align-items: center; gap: .5rem; }
+.kicker .n { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--button); color: var(--white); font-family: "Varela Round", sans-serif; font-size: .95rem; }
 h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin-bottom: 1.1rem; }
 .sec-lead { font-size: 1.15rem; color: var(--ink-soft); max-width: 40rem; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
@@ -185,7 +189,7 @@ h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin-bottom: 1.1rem; }
 .report-art { position: relative; }
 .report-art .phone { width: 16rem; margin: 0 auto; }
 .report-art .tag { position: absolute; background: var(--white); border: 2px solid var(--sand-line); border-radius: 16px; padding: .5rem .85rem; font-size: .9rem; box-shadow: 0 4px 0 var(--card-shadow); max-width: 13rem; line-height: 1.4; }
-.report-art .tag b { display: block; font-size: .78rem; color: var(--apricot-dark); font-weight: 600; }
+.report-art .tag b { display: block; font-size: .78rem; color: var(--apricot-ink); font-weight: 600; }
 .report-art .t1 { top: 9%; inset-inline-start: 0; }
 .report-art .t2 { top: 48%; inset-inline-end: 0; }
 .report-art .t3 { bottom: 10%; inset-inline-start: 4%; }
@@ -203,7 +207,7 @@ h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin-bottom: 1.1rem; }
 .age .split { grid-template-columns: .8fr 1.2fr; }
 .age-art { position: relative; display: flex; justify-content: center; }
 .age-art img { width: 15rem; }
-.big-num { font-family: "Varela Round", sans-serif; font-size: clamp(3rem, 8vw, 5rem); line-height: 1; color: var(--apricot); }
+.big-num { font-family: "Varela Round", sans-serif; font-size: clamp(3rem, 8vw, 5rem); line-height: 1; color: var(--apricot-dark); }
 .big-num small { font-size: .35em; color: var(--ink-soft); display: block; margin-top: .4rem; font-family: "Rubik", sans-serif; }
 @media (max-width: 860px) { .age .split { grid-template-columns: 1fr; } .age-art img { width: 11rem; } }
 
@@ -244,7 +248,7 @@ h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); margin-bottom: 1.1rem; }
 details { background: var(--white); border: 2px solid var(--sand-line); border-radius: 20px; margin-bottom: .9rem; box-shadow: 0 4px 0 var(--card-shadow); }
 summary { cursor: pointer; list-style: none; padding: 1.05rem 1.3rem; font-weight: 600; font-size: 1.08rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
 summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; font-family: "Varela Round", sans-serif; font-size: 1.6rem; color: var(--apricot); line-height: 1; transition: transform .2s; }
+summary::after { content: "+"; font-family: "Varela Round", sans-serif; font-size: 1.6rem; color: var(--apricot-dark); line-height: 1; transition: transform .2s; }
 details[open] summary::after { transform: rotate(45deg); }
 details .a { padding: 0 1.3rem 1.1rem; color: var(--ink-soft); font-size: 1.02rem; }
 details .a p:last-child { margin: 0; }
@@ -270,13 +274,13 @@ footer a:hover { color: var(--ink); }
 
 .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
 .js .reveal.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } .reveal { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } .js .reveal { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
 
 /* why speaking */
 .why { padding-top: 1rem; }
 .why-card { position: relative; max-width: 56rem; margin: 0 auto; background: var(--apricot-tint); border-radius: 32px; padding: 2.4rem 2.6rem; padding-inline-end: 13rem; overflow: hidden; }
 .why-card h2 { margin-bottom: 1rem; }
-.why-card .kicker { color: var(--apricot-dark); }
+.why-card .kicker { color: var(--apricot-ink); }
 .why-card .sec-lead { color: var(--ink); max-width: none; }
 .why-card .sec-lead:last-of-type { margin-bottom: 0; }
 .why-bunny { position: absolute; width: 11rem; bottom: -.8rem; inset-inline-end: 1.2rem; }
@@ -292,7 +296,7 @@ footer a:hover { color: var(--ink); }
 .shots figcaption { font-family: "Varela Round", sans-serif; font-size: 1.2rem; margin-top: 1rem; }
 @media (max-width: 860px) { .shots { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.2rem; } .shots .phone { max-width: 10rem; } }
 
-.story .pull { font-family: "Varela Round", sans-serif; font-size: 1.35rem; color: var(--apricot-dark); line-height: 1.4; margin: 1.4rem 0; }
+.story .pull { font-family: "Varela Round", sans-serif; font-size: 1.35rem; color: var(--apricot-ink); line-height: 1.4; margin: 1.4rem 0; }
 </style>
 </head>
 <body>
@@ -300,9 +304,10 @@ footer a:hover { color: var(--ink); }
 <!-- Google Play link: replace with the official "Get it on Google Play" badge before going live
      (Google's badge generator, https://play.google.com/intl/en_us/badges/). -->
 
+<a class="skip" href="#main">דלגו לתוכן</a>
 <header class="top" id="top">
   <div class="wrap">
-    <a class="logo" href="#"><img src="assets/icon-192.png" alt=""><span class="en">Sayloo</span></a>
+    <a class="logo" href="#"><img src="assets/icon-192.png" alt=""><span class="en" lang="en">Sayloo</span></a>
     <nav class="links" aria-label="ניווט">
       <a href="#play">משחקים</a>
       <a href="#speak">מדברים</a>
@@ -313,7 +318,7 @@ footer a:hover { color: var(--ink); }
   </div>
 </header>
 
-<main>
+<main id="main" tabindex="-1">
 
 <!-- HERO -->
 <section class="hero">
@@ -344,8 +349,8 @@ footer a:hover { color: var(--ink); }
 
 <div class="facts">
   <ul>
-    <li><b>100</b> מילים ראשונות שכל ילד צריך להכיר</li>
-    <li><b class="en">ABC</b> אותיות באנגלית</li>
+    <li><b>100</b> מילים ראשונות באנגלית</li>
+    <li><b class="en" lang="en">ABC</b> אותיות באנגלית</li>
     <li><b>4</b> משחקי דיבור</li>
     <li><b>0</b> פרסומות</li>
   </ul>
@@ -438,9 +443,9 @@ footer a:hover { color: var(--ink); }
     <div class="split">
       <div class="report-art reveal">
         <div class="phone"><img src="assets/shots/07-progress.webp" alt="מסך ההתקדמות להורים: סיכום שבועי ורשימת מילים לפי נושא" loading="lazy"></div>
-        <div class="tag t1"><b>השבוע</b>אמר 8 מילים ולמד 4 חדשות. הכי קשה לו עכשיו: <span class="en">red</span></div>
-        <div class="tag t2"><b>כחול · <span class="en">blue</span></b>ההגייה במצב מושלם</div>
-        <div class="tag t3"><b>אדום · <span class="en">red</span></b>צריך עוד קצת תרגול</div>
+        <div class="tag t1"><b>השבוע</b>אמר 8 מילים ולמד 4 חדשות. הכי קשה לו עכשיו: <span class="en" lang="en">red</span></div>
+        <div class="tag t2"><b>כחול · <span class="en" lang="en">blue</span></b>ההגייה במצב מושלם</div>
+        <div class="tag t3"><b>אדום · <span class="en" lang="en">red</span></b>צריך עוד קצת תרגול</div>
       </div>
       <div class="reveal">
         <div class="kicker"><span class="n">3</span> להורים</div>
@@ -465,7 +470,7 @@ footer a:hover { color: var(--ink); }
       <div class="age-art reveal"><img src="assets/bunny/wow.webp" alt="" aria-hidden="true" loading="lazy"></div>
       <div class="reveal">
         <h2>למה דווקא עכשיו</h2>
-        <p class="sec-lead">ילדים קטנים עוד שומעים צלילים שלנו, המבוגרים, כבר קשה לשמוע. והם לא מתביישים לנסות: ילד בן חמש יגיד <span class="word">elephant</span> בקול רם בלי לחשוב פעמיים.</p>
+        <p class="sec-lead">ילדים קטנים עוד שומעים צלילים שלנו, המבוגרים, כבר קשה לשמוע. והם לא מתביישים לנסות: ילד בן חמש יגיד <span class="word" lang="en">elephant</span> בקול רם בלי לחשוב פעמיים.</p>
         <p class="sec-lead">מחקרים מראים שמי שמתחיל שפה שנייה בילדות מגיע הכי קרוב לרמה של דובר שפת אם. אז לא צריך לחכות לכיתה ג'. אפשר להתחיל בקטן, עכשיו, בכמה דקות ביום.</p>
       </div>
     </div>
@@ -480,16 +485,16 @@ footer a:hover { color: var(--ink); }
       <p class="sec-lead" style="margin-inline:auto">עשרה נושאים, עשר מילים בכל אחד. מילים שכל ילד פוגש בבית, בגן ובדרך לסבא וסבתא.</p>
     </div>
     <div class="themes">
-      <div class="theme reveal"><div class="pic"><div class="swatches"><i style="background:#E53935"></i><i style="background:#1E88E5"></i><i style="background:#FDD835"></i></div></div><b>צבעים</b><span class="en">red, blue</span></div>
-      <div class="theme reveal"><div class="pic"><div class="nums">1 2 3</div></div><b>מספרים</b><span class="en">one, two</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/animal.lion.webp" alt="" loading="lazy"></div><b>חיות</b><span class="en">lion, cat</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/vehicle.train.webp" alt="" loading="lazy"></div><b>כלי תחבורה</b><span class="en">train, car</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/toy.teddy.webp" alt="" loading="lazy"></div><b>צעצועים</b><span class="en">teddy, ball</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/produce.watermelon.webp" alt="" loading="lazy"></div><b>פירות וירקות</b><span class="en">banana</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/sweet.icecream.webp" alt="" loading="lazy"></div><b>ממתקים</b><span class="en">ice cream</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/food.pizza.webp" alt="" loading="lazy"></div><b>אוכל</b><span class="en">pizza</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/home.bed.webp" alt="" loading="lazy"></div><b>הבית</b><span class="en">bed</span></div>
-      <div class="theme reveal"><div class="pic"><img src="assets/icons/nature.rainbow.webp" alt="" loading="lazy"></div><b>טבע</b><span class="en">rainbow</span></div>
+      <div class="theme reveal"><div class="pic"><div class="swatches"><i style="background:#E53935"></i><i style="background:#1E88E5"></i><i style="background:#FDD835"></i></div></div><b>צבעים</b><span class="en" lang="en">red, blue</span></div>
+      <div class="theme reveal"><div class="pic"><div class="nums">1 2 3</div></div><b>מספרים</b><span class="en" lang="en">one, two</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/animal.lion.webp" alt="" loading="lazy"></div><b>חיות</b><span class="en" lang="en">lion, cat</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/vehicle.train.webp" alt="" loading="lazy"></div><b>כלי תחבורה</b><span class="en" lang="en">train, car</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/toy.teddy.webp" alt="" loading="lazy"></div><b>צעצועים</b><span class="en" lang="en">teddy, ball</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/produce.watermelon.webp" alt="" loading="lazy"></div><b>פירות וירקות</b><span class="en" lang="en">banana</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/sweet.icecream.webp" alt="" loading="lazy"></div><b>ממתקים</b><span class="en" lang="en">ice cream</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/food.pizza.webp" alt="" loading="lazy"></div><b>אוכל</b><span class="en" lang="en">pizza</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/home.bed.webp" alt="" loading="lazy"></div><b>הבית</b><span class="en" lang="en">bed</span></div>
+      <div class="theme reveal"><div class="pic"><img src="assets/icons/nature.rainbow.webp" alt="" loading="lazy"></div><b>טבע</b><span class="en" lang="en">rainbow</span></div>
     </div>
   </div>
 </section>
@@ -532,6 +537,8 @@ footer a:hover { color: var(--ink); }
         <p class="sub">תשלום אחד · נפתחת מאזור ההורים</p>
         <ul>
           <li>כל מאה המילים, בכל עשרת הנושאים</li>
+          <li>כל אותיות ה־<span class="en" lang="en">ABC</span></li>
+          <li>ללא מגבלה על מספר הילדים</li>
           <li>כל השלבים והמשחקים</li>
         </ul>
       </div>
@@ -568,10 +575,6 @@ footer a:hover { color: var(--ink); }
         <summary>צריך אינטרנט?</summary>
         <div class="a"><p>רק בפעם הראשונה, כשההורה מתחבר. מעבר לזה הכול קורה בטלפון עצמו, כך שאפשר לשחק גם בדרך לאילת.</p></div>
       </details>
-      <details>
-        <summary>יש גרסה לאייפון?</summary>
-        <div class="a"><p>עוד לא. כרגע סיילו זמין לאנדרואיד, וגרסת האייפון בדרך.</p></div>
-      </details>
     </div>
   </div>
 </section>
@@ -605,11 +608,12 @@ footer a:hover { color: var(--ink); }
 
 <footer>
   <div class="wrap">
-    <div>© 2026 <span class="en">Sayloo</span> · <a href="mailto:hello@sayloo.app" class="en">hello@sayloo.app</a></div>
+    <div>© 2026 <span class="en" lang="en">Sayloo</span> · <a href="mailto:hello@sayloo.app" class="en" lang="en">hello@sayloo.app</a></div>
     <nav aria-label="מסמכים">
       <a href="https://sayloo.app/privacy-policy.he.html">מדיניות פרטיות</a>
       <a href="https://sayloo.app/terms.he.html">תנאי שימוש</a>
       <a href="https://sayloo.app/delete-account.he.html">מחיקת חשבון</a>
+      <a href="https://sayloo.app/accessibility.he.html">הצהרת נגישות</a>
     </nav>
   </div>
 </footer>
